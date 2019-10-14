@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import pickle
 from firebase import firebase
+from datetime import datetime
 
 firebase = firebase.FirebaseApplication('https://facerecog-e2c4b.firebaseio.com/')
 face_cascade = cv2.CascadeClassifier('cascades/data/haarcascade_frontalface_alt2.xml')
@@ -13,6 +14,7 @@ with open("lables.pickle", 'rb') as f:
 	og_labels = pickle.load(f)
 	labels = {v:k for k,v in og_labels.items()}
 cap = cv2.VideoCapture(0)
+time = datetime.now()
 
 while(True):
 	ret, frame = cap.read()
@@ -43,8 +45,12 @@ while(True):
 	cv2.imshow('frame',frame)
 	if cv2.waitKey(20) & 0xFF == ord('q'):
 		print(labels[id_])
-		#additem=firebase.post('/image',{labels[id_]})
-		break
+		n=labels[id_]
+		#time=now.strftime("%d/%m/%Y")
+		name=time.strftime("%Y-%m-%d")
+		t=time.strftime("%H")
+		final=name+"/"+t
+		additem=firebase.post(final,{n:'p'})
 
 cap.release()
 cv2.destroyAllWindows()
